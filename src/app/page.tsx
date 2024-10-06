@@ -87,7 +87,7 @@ export default async function Home() {
 
   return (
     <main className="flex flex-col-1 min-h-screen min-w-full">
-     <MapPage accessToken={mapboxAccessToken} />
+      <MapPage accessToken={mapboxAccessToken} />
     </main>
   );
 }

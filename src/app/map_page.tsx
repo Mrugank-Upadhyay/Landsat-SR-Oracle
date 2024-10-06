@@ -1,27 +1,35 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import MapBox from './mapbox';
 
 const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
-    const mapRef = useRef<{ container: HTMLDivElement | null; marker: mapboxgl.Marker | null }>(null);
+    // const mapRef = useRef<{ container: HTMLDivElement | null; marker: mapboxgl.Marker | null }>({
+    //     container: null,
+    //     marker: null,
+    // });
     
-    const handleButtonClick = () => {
-        if (mapRef.current) {
-            console.log('Map container ref:', mapRef.current.container);
-            console.log('Current Marker ref:', mapRef.current.marker);
-        }
-    };
+    // const handleButtonClick = () => {
+    //     if (mapRef.current) {
+    //         console.log('Map container ref:', mapRef.current.container);
+    //         console.log('Current Marker ref:', mapRef.current.marker);
+    //     }
+    // };
 
-    useEffect(() => {
-        console.log(`mapRef marker latlong: ${mapRef.current?.marker?.getLngLat}`)
-    }, [mapRef.current?.marker?.getLngLat])
+    const [marker, setMarker] = useState<mapboxgl.Marker | null>(null)
     
+    const handleMarkerChange = (newMarker: mapboxgl.Marker) => {
+        console.log(`prev marker lat long = ${marker?.getLngLat}`)
+        setMarker(newMarker)
+        console.log(`new marker lat long = ${newMarker?.getLngLat()}`)
+    }
+
+
 
     return (
         <div className='flex-col-1 min-h-screen min-w-full'>
-            <MapBox ref={mapRef} accessToken={accessToken}/>
-            <button onClick={handleButtonClick}>Log Map and Marker Refs</button>
+            <MapBox accessToken={accessToken} marker={marker} changeMarker={handleMarkerChange}/>
+            {/* <button onClick={handleButtonClick}>Display Marker Refs</button> */}
         </div>
     );
 };
