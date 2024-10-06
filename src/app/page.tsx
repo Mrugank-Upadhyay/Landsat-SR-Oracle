@@ -1,4 +1,5 @@
 import { addDays, startOfToday } from "date-fns";
+import MapPage from "./map_page";
 
 interface SpectatorAcquisitionData {
   type: string,
@@ -9,8 +10,8 @@ interface SpectatorAcquisitionData {
       coordinates: [[[]]]
     },
     properties: {
-      row: number, // 0-indexed
-      path: number, // 0-indexed
+      row: number, // 1-indexed
+      path: number, // 1-indexed
       begin_time: string, // ISO datestring
       end_time: any,
       satellite: string,
@@ -19,22 +20,22 @@ interface SpectatorAcquisitionData {
 };
 
 const spectatorAPIBaseUrl = "https://api.spectator.earth"
-const spectatorAPIKey = process.env.SPECTATOR_API_KEY
+const spectatorAPIKey = process.env.SPECTATOR_API_KEY || "";
+const mapboxAccessToken = process.env.MAPBOX_GL_ACCESS_TOKEN || "";
 
 export default async function Home() {
   const days = [];
   const today = startOfToday();
   for (let i = 0; i < 17; i++) {
     days.push(
-      addDays(today, -i).toISOString(), // remove after (just for bug testing)
+      // addDays(today, -i).toISOString(), // remove after (just for bug testing)
       addDays(today, i).toISOString() // Generate ISO strings for each day
     )
   };
 
   let acquisitionDataError = false;
 
-  // Path & Row Properties in the features are 0-indexed when they should be 1-indexed??
-  // Scratch that, it might be 1-indexed...
+  // Path & Row Properties in the features are 1-indexed
   const acquisitionPlanData: SpectatorAcquisitionData = {
     type: "FeatureCollection",
     features: []
@@ -71,12 +72,12 @@ export default async function Home() {
   }
 
 
-  const checkPath = 0;
-  const checkRow = 0;
+  const checkPath = 19;
+  const checkRow = 30;
   const passOverPathRow = acquisitionPlanData.features.filter((feature) => {
     const path = feature.properties.path;
     const row = feature.properties.row;
-    return path == checkPath || row == checkRow;
+    return path == checkPath && row == checkRow;
   })
   console.log(`On Path ${checkPath} and row ${checkRow}; Which Satellite? ${passOverPathRow.length > 0 ? passOverPathRow[0].properties.satellite : "None"}, how many times will it pass over Path/Row? ${passOverPathRow.length}, and when ${passOverPathRow.length > 0 ? passOverPathRow[0].properties.begin_time : "Never"}`)
 
@@ -85,7 +86,8 @@ export default async function Home() {
 
 
   return (
-    <>
-    </>
+    <main className="flex flex-col-1 min-h-screen min-w-full">
+     <MapPage accessToken={mapboxAccessToken} />
+    </main>
   );
 }

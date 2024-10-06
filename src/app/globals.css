@@ -25,3 +25,12 @@ body {
     text-wrap: balance;
   }
 }
+
+.mapboxgl-marker {
+  height: 20px;
+  width: 20px;
+  z-index: 5;
+  border: 1px solid black;
+  border-radius: 50%;
+  background-color: #305bad;
+}
