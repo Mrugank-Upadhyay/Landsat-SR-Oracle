@@ -11,6 +11,7 @@ export default function Component() {
       </SheetTrigger>
       <SheetContent
         side="left"
+        className="w-[40rem] sm:max-w-full"
         onInteractOutside={(e) => {
           e.preventDefault()
         }}
