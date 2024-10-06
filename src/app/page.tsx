@@ -1,6 +1,7 @@
 import MapPage from "./map_page";
 import SideDrawer from "./SideDrawer"
 import { addDays, addSeconds, format, parse, subDays } from 'date-fns';
+import { globalStore, GlobalState, Acquisition } from "./store/globalStore";
 
 
 const mapboxAccessToken = process.env.MAPBOX_GL_ACCESS_TOKEN || "";

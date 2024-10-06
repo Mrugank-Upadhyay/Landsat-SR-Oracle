@@ -9,7 +9,7 @@ import { featureCollection } from '@turf/turf';
 
 // import { assert } from 'console';
 
-interface WRS2ApiResponse {
+type WRS2ApiResponse = {
     path: number,
     row: number,
     geometry: {
@@ -18,7 +18,7 @@ interface WRS2ApiResponse {
     }
 }
 
-interface WRS2Boundary {
+export type WRS2Boundary = {
     pathRows: PathRow[]
     boundary: {
         type: string,
@@ -32,7 +32,7 @@ interface WRS2Boundary {
     }
 }
 
-interface PathRow {
+export type PathRow = {
     path: number,
     row: number
 }
