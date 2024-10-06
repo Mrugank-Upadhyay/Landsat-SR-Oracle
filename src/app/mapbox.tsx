@@ -16,6 +16,8 @@ const MapBox = ({accessToken, marker, changeMarker}: {accessToken: string | null
     //     marker: markerRef.current
     // })
 
+    
+
     useEffect(() => {
         mapboxgl.accessToken = accessToken!!;
         const map = new mapboxgl.Map({
@@ -25,27 +27,23 @@ const MapBox = ({accessToken, marker, changeMarker}: {accessToken: string | null
             zoom: 5, // starting zoom
         });
 
-        map.on('click', (e) => {
+        map.on('click', async (e) => {
             let [lat, long] = [e.lngLat.lat, e.lngLat.lng]
             // let popup = new mapboxgl.Popup().setText(`Lat: ${lat} <br> Long: ${long}`);
             // let el = document.createElement('div');
             // el.className = "mapboxgl-marker";
-
-            // if (markerRef.current) {
-            //     markerRef.current.remove()
-            // }
-            const marker = new mapboxgl.Marker()
-                .setLngLat(e.lngLat)
-                // .setPopup(popup)
-                .addTo(map);
+            console.log(`have marker? ${marker}`)
+            let newMarker;
             if (marker) {
-                marker.remove()
+                newMarker = marker.setLngLat(e.lngLat)
             }
-            changeMarker(marker)
-
-            // markerRef.current = marker;
-            // // Log the current marker coordinates
-            // console.log("Marker added at: ", e.lngLat);
+            else {
+                console.log("NEW MARKER")
+                newMarker = new mapboxgl.Marker()
+                    .setLngLat(e.lngLat)
+                    .addTo(map)
+            }
+            changeMarker(newMarker)
         })
 
         return () => {

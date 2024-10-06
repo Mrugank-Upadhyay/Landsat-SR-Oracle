@@ -19,7 +19,6 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
     const [marker, setMarker] = useState<mapboxgl.Marker | null>(null)
     
     const handleMarkerChange = (newMarker: mapboxgl.Marker) => {
-        console.log(`prev marker lat long = ${marker?.getLngLat}`)
         setMarker(newMarker)
         console.log(`new marker lat long = ${newMarker?.getLngLat()}`)
     }
