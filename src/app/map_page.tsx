@@ -6,6 +6,7 @@ import Map, { Layer, MapMouseEvent, Marker, Source} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { featureCollection } from '@turf/turf';
 
+
 // import { assert } from 'console';
 
 interface WRS2ApiResponse {
@@ -18,7 +19,7 @@ interface WRS2ApiResponse {
 }
 
 interface WRS2Boundary {
-    pathRow: PathRow
+    pathRows: PathRow[]
     boundary: {
         type: string,
         features: [{
@@ -43,14 +44,15 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
         latitude: number,
     } | null>(null)
 
-    const [wrs2BoundaryList, setWRS2BoundaryList] = useState<WRS2Boundary[] | null>(null)
+    const [wrs2BoundaryList, setWRS2BoundaryList] = useState<WRS2Boundary | null>(null)
     
     const layerStyle: FillLayerSpecification = {
         id: "wrs2BoundaryLayer",
         type: "fill",
         source: "mapbox",
         paint: {
-            'fill-color': '#99ccff'
+            'fill-color': '#25C7F8',
+            'fill-opacity': 0.4
         }
     }
 
@@ -68,22 +70,40 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
                 body: JSON.stringify(e.lngLat)
             })
             const features: WRS2ApiResponse[] = await response.json()
-            let wrs2BoundaryFeatures: WRS2Boundary[] = []
-            features.forEach((feature) => {
-                const wrs2Boundary: WRS2Boundary = {
-                    pathRow: {path: feature.path, row: feature.row},
-                    boundary: {
-                        type: "FeatureCollection",
-                        features: [{
-                            type: "Feature",
-                            geometry: feature.geometry
-                        }]
-                    }
+            if (features.length == 0) {
+                setWRS2BoundaryList(null)
+                return;
+            }
+            
+            let wrs2BoundaryFeatures: WRS2Boundary = {
+                pathRows: [{path: features[0].path, row: features[0].row}],
+                boundary: {
+                    type: "FeatureCollection",
+                    features: [{
+                        type: "Feature",
+                        geometry: {
+                            type: features[0].geometry.type,
+                            coordinates: features[0].geometry.coordinates
+                        }
+                    }]
                 }
-                wrs2BoundaryFeatures.push(wrs2Boundary)
-            })
-            console.log(wrs2BoundaryFeatures.length)
+            }
+            if (features.length > 1) {
+                features.slice(1).forEach((feature) => {
+                    wrs2BoundaryFeatures.pathRows.push({path: feature.path, row: feature.row})
+                    wrs2BoundaryFeatures.boundary.features.push({
+                        type: "Feature",
+                        geometry: {
+                            type: feature.geometry.type,
+                            coordinates: feature.geometry.coordinates
+                        }
+                    })
+                })
+            }[0]
             setWRS2BoundaryList(wrs2BoundaryFeatures)
+            console.log(wrs2BoundaryFeatures.pathRows.length)
+            console.log(wrs2BoundaryFeatures)
+            console.log(wrs2BoundaryList)
         }
     }
 
@@ -104,31 +124,14 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
                     ? <Marker longitude={markerProps!.longitude} latitude={markerProps!.latitude}/>
                     : null
             }
-            {/* {   wrs2BoundaryList && wrs2BoundaryList.map((feature) => {
-                    <Source id="WRS2_Boundaries" type="geojson" data={feature.boundary}>
-                        <Layer {...layerStyle} />
-                    </Source>
-                })
-
-            } */}
-            {   wrs2BoundaryList &&
-                <Source id="WRS2_Boundaries" type="geojson" data={wrs2BoundaryList[0].boundary}>
-                    <Layer {...layerStyle} />
-                </Source>
-            }
-            {   (wrs2BoundaryList && wrs2BoundaryList.length > 1) &&
-                <Source id="WRS2_Boundaries" type="geojson" data={wrs2BoundaryList[1].boundary}>
-                    <Layer {...layerStyle} />
-                </Source>
-            }
             
-            {/* {
-                wrs2Boundary.length != 0
-                ? <Source id="WRS2_Boundaries" type="geojson" data={wrs2Boundary}>
+            {   wrs2BoundaryList
+                ? <Source id="WRS2_Boundaries" type="geojson" data={wrs2BoundaryList.boundary}>
                     <Layer {...layerStyle} />
                   </Source>
                 : null
-            } */}
+            }
+            
         </Map>
     )
 };
