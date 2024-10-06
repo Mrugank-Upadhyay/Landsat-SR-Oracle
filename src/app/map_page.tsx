@@ -34,7 +34,6 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
     }
 
     return (
-        <div className='flex w-full'>
             <Map
                 initialViewState={{
                     longitude: -79.38,
@@ -52,7 +51,6 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
                         : null
                 }
             </Map>
-        </div>
     )
 };
 

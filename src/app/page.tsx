@@ -1,6 +1,5 @@
-
 import MapPage from "./map_page";
-import SideDrawer from "./SideDrawer";
+import SideDrawer from "./SideDrawer"
 import { addDays, addSeconds, format, parse, subDays } from 'date-fns';
 
 
@@ -134,10 +133,10 @@ export default async function Home() {
   const cycles = await getCycles()
 
   const acquisitionTimes = await calculateAcquisitionTimes(
-    cycles, 
-    16, 
-    30, 
-    new Date(), 
+    cycles,
+    16,
+    30,
+    new Date(),
     ["landsat_8", "landsat_9"],
     {
       upcoming: 0,
@@ -150,19 +149,13 @@ export default async function Home() {
   })
 
   return (
-    <main className="min-w-full flex min-h-screen">
-      {/* <div className="flex h-screen flex-col md:flex-row md:overflow-hidden"> */}
-      {/* <h1>Hello</h1> */}
-      {/* <MapPage accessToken={mapboxAccessToken} /> */}
-      {/* <div className="w-64 flex-none"> */}
-        {/* <SideDrawer /> */}
-      {/* </div> */}
-      <div className="flex-1 flex">
+    <main className="w-screen h-screen relative">
+      <div className="w-screen h-screen">
         <MapPage accessToken={mapboxAccessToken} />
       </div>
-
+      <div className="p-4 absolute top-0 left-0">
+        <SideDrawer />
+      </div>
     </main>
-    
-    
   );
 }
