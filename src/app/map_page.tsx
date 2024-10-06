@@ -34,17 +34,17 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
     }
 
     return (
-        <div>
+        <div className='flex w-full'>
             <Map
                 initialViewState={{
                     longitude: -79.38,
                     latitude: 43.65,
                     zoom: 5
                 }}
-                style={{width: '100%', height: '100%', position: 'absolute'}}
+                // style={{width: '100%', height: '100%'}}
                 mapStyle="mapbox://styles/mapbox/dark-v11"
                 mapboxAccessToken={accessToken}
-                onClick={handleMarker}
+                // onClick={handleMarker}
             >
                 {
                     activePinMarker && markerProps

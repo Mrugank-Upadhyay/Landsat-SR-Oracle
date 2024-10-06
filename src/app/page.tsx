@@ -150,15 +150,19 @@ export default async function Home() {
   })
 
   return (
-    <main className="flex flex-row min-w-full min-h-screen overflow-hidden">
+    <main className="min-w-full flex min-h-screen">
+      {/* <div className="flex h-screen flex-col md:flex-row md:overflow-hidden"> */}
+      {/* <h1>Hello</h1> */}
       {/* <MapPage accessToken={mapboxAccessToken} /> */}
-      <div className="w-64 flex-none">
-        <SideDrawer />
-      </div>
-      <div className="flex-1 min-w-0">
+      {/* <div className="w-64 flex-none"> */}
+        {/* <SideDrawer /> */}
+      {/* </div> */}
+      <div className="flex-1 flex">
         <MapPage accessToken={mapboxAccessToken} />
       </div>
 
     </main>
+    
+    
   );
 }
