@@ -27,7 +27,7 @@ export interface GlobalState {
     updateSatelliteResolution: (val: number) => void,
 }
 
-export const globalStore =  create<GlobalState>((set) => ({
+export const useGlobalStore =  create<GlobalState>()((set) => ({
     pathRows: [],
     acquisitions: [],
     cloudCoverThreshold: 1,

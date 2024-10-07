@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FillLayerSpecification } from 'mapbox-gl'
+import { FillLayerSpecification, LngLat } from 'mapbox-gl'
 import Map, { Layer, MapMouseEvent, Marker, Source} from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { featureCollection } from '@turf/turf';
+import { useGlobalStore, GlobalState } from './store/globalStore';
 
 
 // import { assert } from 'console';
@@ -37,13 +38,9 @@ export type PathRow = {
     row: number
 }
 
-const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
+const MapPage: React.FC<{ accessToken: string}> = ({ accessToken }) => {
     const [activePinMarker, setActivePinMarker] = useState(false)
-    const [markerProps, setMarkerProps] = useState<{
-        longitude: number,
-        latitude: number,
-    } | null>(null)
-
+    
     const [wrs2BoundaryList, setWRS2BoundaryList] = useState<WRS2Boundary | null>(null)
     
     const layerStyle: FillLayerSpecification = {
@@ -56,21 +53,29 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
         }
     }
 
+    const pathRows = useGlobalStore((state) => state.pathRows)
+    const updatePathRows = useGlobalStore((state) => state.updatePathRows)
+
+    const markerLngLat = useGlobalStore((state) => state.markerLngLat)
+    const updateMarkerLngLat = useGlobalStore((state) => state.updateMarkerLngLat)
+
     const handleMarker = async (e: MapMouseEvent) => {
-        if (!markerProps) {
+        if (!markerLngLat) {
             setActivePinMarker(true)
         }
-        setMarkerProps({
-            longitude: e.lngLat.lng,
-            latitude: e.lngLat.lat,
-        })
+
+        
+        updateMarkerLngLat(new LngLat(e.lngLat.lng, e.lngLat.lat))
+
         if (e.lngLat) {
             const response = await fetch("/api/latlng-to-wrs", {
                 method: "POST",
                 body: JSON.stringify(e.lngLat)
             })
+            
             const features: WRS2ApiResponse[] = await response.json()
             if (features.length == 0) {
+                updatePathRows([])
                 setWRS2BoundaryList(null)
                 return;
             }
@@ -99,7 +104,10 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
                         }
                     })
                 })
-            }[0]
+            }
+
+            updatePathRows(wrs2BoundaryFeatures.pathRows)
+            console.log(`global store path rows: ${pathRows}`)
             setWRS2BoundaryList(wrs2BoundaryFeatures)
             console.log(wrs2BoundaryFeatures.pathRows.length)
             console.log(wrs2BoundaryFeatures)
@@ -120,8 +128,8 @@ const MapPage: React.FC<{ accessToken: string }> = ({ accessToken }) => {
             onClick={handleMarker}
         >
             {
-                activePinMarker && markerProps
-                    ? <Marker longitude={markerProps!.longitude} latitude={markerProps!.latitude}/>
+                activePinMarker && markerLngLat
+                    ? <Marker longitude={markerLngLat.lng} latitude={markerLngLat.lat}/>
                     : null
             }
             
