@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FillLayerSpecification, LngLat } from 'mapbox-gl'
-import Map, { Layer, MapMouseEvent, Marker, Source} from 'react-map-gl';
+import Map, { Layer, MapMouseEvent, Marker, Source, ScaleControl } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { featureCollection } from '@turf/turf';
 import { useGlobalStore, GlobalState } from './store/globalStore';
@@ -49,7 +49,8 @@ const MapPage: React.FC<{ accessToken: string}> = ({ accessToken }) => {
         source: "mapbox",
         paint: {
             'fill-color': '#25C7F8',
-            'fill-opacity': 0.4
+            'fill-opacity': 0.2,
+            'fill-outline-color': '#084d8a'
         }
     }
 
@@ -127,6 +128,7 @@ const MapPage: React.FC<{ accessToken: string}> = ({ accessToken }) => {
             mapboxAccessToken={accessToken}
             onClick={handleMarker}
         >
+            <ScaleControl style={{fontSize: '13px'}} position='bottom-right'/>
             {
                 activePinMarker && markerLngLat
                     ? <Marker longitude={markerLngLat.lng} latitude={markerLngLat.lat}/>

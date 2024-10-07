@@ -4,7 +4,6 @@ import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table"
 import { addDays, addSeconds, format, parse, subDays } from 'date-fns';
 import { useGlobalStore } from "./store/globalStore";
-import { PathRow } from "./map_page";
 import { useEffect } from "react";
 
 export type LandsatCyclesFull = {
