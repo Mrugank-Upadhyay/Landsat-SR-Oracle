@@ -101,7 +101,7 @@ export function calculateAcquisitionTimes(cycles: LandsatSatelliteCycles, path: 
 
   const upcoming = search(limits.upcoming, (offset) => offset + 1, (d) => d.getTime() > date.getTime(), (_) => "upcoming")
   upcoming.reverse()
-  const previous = search(limits.previous, (offset) => offset - 1, (d) => d.getTime() < date.getTime(), (_) => "processed")
+  const previous = search(limits.previous, (offset) => offset - 1, (d) => d.getTime() < date.getTime(), (_) => "acquired")
 
   return [
     ...upcoming, ...previous

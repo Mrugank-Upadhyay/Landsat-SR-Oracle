@@ -7,7 +7,7 @@ import { LandsatCyclesFull, LandsatSatelliteCycles } from "./acquisitions_table"
 
 const mapboxAccessToken = process.env.MAPBOX_GL_ACCESS_TOKEN || "";
 
-export async function getCycles(): Promise<LandsatSatelliteCycles> {
+async function getCycles(): Promise<LandsatSatelliteCycles> {
   const res = await fetch("https://landsat.usgs.gov/sites/default/files/landsat_acq/assets/json/cycles_full.json")
   const cycles_full: {
     "landsat_8": LandsatCyclesFull,
