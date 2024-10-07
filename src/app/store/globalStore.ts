@@ -1,18 +1,11 @@
 import { create } from 'zustand'
 import { PathRow } from '../map_page';
 import { LngLat } from 'mapbox-gl';
-
-export type Acquisition = {
-    satellite: string,
-    status: string,
-    date: Date,
-    path: number,
-    row: number,
-}
+import { Acquisition } from '../acquisitions_table';
 
 export interface GlobalState {
-    pathRows?: PathRow[],
-    acquisitions?: Acquisition[], // All acquisitions (total 6, DESC order)
+    pathRows: PathRow[],
+    acquisitions: Acquisition[], // All acquisitions (total 6, DESC order)
     markerLngLat?: LngLat, // LngLat for selected location by marker
     notificationLeadTime?: Date,
     cloudCoverThreshold?: number, // cloud cover under this value (inclusive),
@@ -37,5 +30,5 @@ export const useGlobalStore =  create<GlobalState>()((set) => ({
     updateNotificationLeadTime: (val: Date) => set({notificationLeadTime: val}),
     updateCloudCoverThreshold: (val: number) => set({cloudCoverThreshold: val}),
     updateChosenAcquisition: (val: Acquisition) => set({chosenAcquisition: val}),
-    updateSatelliteResolution: (val: number) => set({satelliteResolution: val})
+    updateSatelliteResolution: (val: number) => set({satelliteResolution: val}),
 }))

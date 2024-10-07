@@ -20,10 +20,5 @@ export async function POST(request: Request) {
         }
     }
 
-    console.dir(path_rows, {
-        depth: null,
-        colors: true,
-    })
-
     return Response.json(path_rows)
 }

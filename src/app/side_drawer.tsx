@@ -2,8 +2,12 @@
 
 import { Sheet, SheetContent, SheetPortal, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import AcquisitionsTable, { LandsatSatelliteCycles } from "./acquisitions_table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-export default function Component() {
+export default function Component({ cycles }: {
+  cycles: LandsatSatelliteCycles
+}) {
   return (
     <Sheet modal={false} defaultOpen>
       <SheetTrigger asChild>
@@ -11,7 +15,7 @@ export default function Component() {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-[40rem] sm:max-w-full"
+        className="w-[40rem] sm:max-w-full h-full"
         onInteractOutside={(e) => {
           e.preventDefault()
         }}
@@ -19,7 +23,10 @@ export default function Component() {
           e.preventDefault()
         }}
       >
-        <SheetTitle>Title</SheetTitle>
+        <ScrollArea className="h-full p-4">
+          <SheetTitle>Acquisitions</SheetTitle>
+          <AcquisitionsTable cycles={cycles}/>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   )
