@@ -6,8 +6,6 @@ import { LandsatCyclesFull, LandsatSatelliteCycles } from "./acquisitions_table"
 
 
 const mapboxAccessToken = process.env.MAPBOX_GL_ACCESS_TOKEN || "";
-export const m2mUsername = process.env.M2M_USERNAME || "";
-export const m2mLoginToken = process.env.M2M_LOGIN_TOKEN || "";
 
 async function getCycles(): Promise<LandsatSatelliteCycles> {
   const res = await fetch("https://landsat.usgs.gov/sites/default/files/landsat_acq/assets/json/cycles_full.json")
@@ -15,7 +13,9 @@ async function getCycles(): Promise<LandsatSatelliteCycles> {
     "landsat_8": LandsatCyclesFull,
     "landsat_9": LandsatCyclesFull,
   } = await res.json()
+
   const ret = {}
+
   for (const landsat in cycles_full) {
     const cycles = cycles_full[landsat as keyof typeof cycles_full]
     // @ts-ignore
@@ -41,7 +41,7 @@ export default async function Home() {
   return (
     <main className="w-screen h-screen relative">
       <div className="w-screen h-screen">
-        <MapPage accessToken={mapboxAccessToken} m2mUsername={m2mUsername} m2mLoginToken={m2mLoginToken} />
+        <MapPage accessToken={mapboxAccessToken} />
       </div>
       <div className="p-4 absolute top-0 left-0">
         <SideDrawer cycles={cycles}/>
