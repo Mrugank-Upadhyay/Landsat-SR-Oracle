@@ -16,7 +16,8 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Landsat SR Oracle",
-  description: "Landsat Surface Reflectance viewer and acquisition time tracker.",
+  description:
+    "Landsat Surface Reflectance viewer and acquisition time tracker.",
 };
 
 export default function RootLayout({
