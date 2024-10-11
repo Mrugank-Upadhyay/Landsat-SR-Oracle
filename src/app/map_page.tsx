@@ -23,13 +23,13 @@ export type WRS2Boundary = {
     pathRows: PathRow[]
     boundary: {
         type: string,
-        features: [{
+        features: {
             type: string,
             geometry: {
                 type: string,
                 coordinates: []
             }
-        }]
+        }[]
     }
 }
 
@@ -76,42 +76,29 @@ const MapPage = ({ accessToken, m2mUsername, m2mLoginToken }: { accessToken: str
                 method: "POST",
                 body: JSON.stringify(e.lngLat)
             })
-            
+
             const features: WRS2ApiResponse[] = await pathRowAPIResponse.json()
             if (features.length == 0) {
                 updatePathRows([])
                 setWRS2BoundaryList(null)
                 return;
             }
-            
-            let wrs2BoundaryFeatures: WRS2Boundary = {
-                pathRows: [{path: features[0].path, row: features[0].row}],
+
+            const wrs2BoundaryFeatures: WRS2Boundary = {
+                pathRows: features.map(({ path, row }) => ({ path, row })),
                 boundary: {
                     type: "FeatureCollection",
-                    features: [{
+                    features: features.map(({ geometry }) => ({
                         type: "Feature",
                         geometry: {
-                            type: features[0].geometry.type,
-                            coordinates: features[0].geometry.coordinates
-                        }
-                    }]
+                            type: geometry.type,
+                            coordinates: geometry.coordinates,
+                        },
+                    }))
                 }
             }
 
-            if (features.length > 1) {
-                features.slice(1).forEach((feature) => {
-                    wrs2BoundaryFeatures.pathRows.push({path: feature.path, row: feature.row});
-                    wrs2BoundaryFeatures.boundary.features.push({
-                        type: "Feature",
-                        geometry: {
-                            type: feature.geometry.type,
-                            coordinates: feature.geometry.coordinates
-                        }
-                    });
-                });
-            }
-            
-            try{
+            try {
                 const m2mLoginTokenRes = await fetch("/api/m2m-login-token", {
                     method: "POST",
                     body: JSON.stringify({
