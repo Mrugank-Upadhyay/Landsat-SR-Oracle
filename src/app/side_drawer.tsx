@@ -14,6 +14,7 @@ import AcquisitionsTable, {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DividerHorizontalIcon } from "@radix-ui/react-icons";
 import { Separator } from "@/components/ui/separator";
+import ScenesViewer from "./scene_table";
 
 export default function Component({
   cycles,
@@ -21,13 +22,13 @@ export default function Component({
   cycles: LandsatSatelliteCycles;
 }) {
   return (
-    <Sheet modal={false} defaultOpen>
+    <Sheet modal={false} defaultOpen >
       <SheetTrigger asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-[45rem] pt-10 sm:max-w-full h-full"
+        className="w-[45rem] pt-10 resize-x sm:max-w-full h-full"
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
@@ -38,6 +39,9 @@ export default function Component({
         <ScrollArea className="h-full p-4">
           <SheetTitle>Acquisitions</SheetTitle>
           <AcquisitionsTable cycles={cycles} />
+          <Separator />
+          <SheetTitle>Scenes</SheetTitle>
+          <ScenesViewer />
           <Separator />
         </ScrollArea>
       </SheetContent>
