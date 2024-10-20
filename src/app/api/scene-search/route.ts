@@ -13,10 +13,9 @@ enum WRSFilterID {
 // Since routes in Next.js can't use json bodies outside of POST methods.
 export async function POST(request: Request) {
   const { path, row, cloudMax } = await request.json();
-
   const url = (process.env.M2M_API_URL || "") + "/scene-search";
   const loginToken = request.headers.get("X-Auth-Token") || "";
-
+  
   return await fetch(url, {
     method: "POST",
     headers: {
@@ -24,7 +23,7 @@ export async function POST(request: Request) {
     },
     body: JSON.stringify({
       datasetName: "landsat_ot_c2_l2",
-      maxResults: 5,
+      maxResults: 50,
       metadataType: "full",
       sceneFilter: {
         metadataFilter: {
@@ -44,6 +43,7 @@ export async function POST(request: Request) {
             },
           ],
         },
+        // TODO: remove if we're going to get 100 scenes, and then let users filter afterwards (to just reduce API calls for scenes)
         cloudCoverFilter: {
           min: 0,
           max: cloudMax,
