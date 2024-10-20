@@ -13,6 +13,7 @@ enum WRSFilterID {
 // Since routes in Next.js can't use json bodies outside of POST methods.
 export async function POST(request: Request) {
   const { path, row, cloudMax } = await request.json();
+
   const url = (process.env.M2M_API_URL || "") + "/scene-search";
   const loginToken = request.headers.get("X-Auth-Token") || "";
   
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
     },
     body: JSON.stringify({
       datasetName: "landsat_ot_c2_l2",
-      maxResults: 50,
+      maxResults: 5,
       metadataType: "full",
       sceneFilter: {
         metadataFilter: {
