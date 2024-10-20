@@ -10,7 +10,7 @@ import Map, {
   ScaleControl,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useGlobalStore, SceneSearch } from "./store/globalStore";
+import { useGlobalStore, SceneSearchImage } from "./store/globalStore";
 import { SceneSearchResponse } from "./api/scene-search/route";
 
 // import { assert } from 'console';
@@ -123,6 +123,7 @@ const MapPage = ({ accessToken }: { accessToken: string }) => {
         const row = features[0].row;
         const sceneSearchResponse: SceneSearchResponse = await (
           await fetch("/api/scene-search", {
+            method: "POST",
             body: JSON.stringify({
               path,
               row,
@@ -130,10 +131,19 @@ const MapPage = ({ accessToken }: { accessToken: string }) => {
             }),
           })
         ).json();
-        const sceneSearchResults: SceneSearch[] =
+        const sceneSearchResults: SceneSearchImage[] =
           sceneSearchResponse.data.results;
-        // Save the scene search to global store to display the images in side bar
+        
+        
+        /* Save the scene search to global store to display the images in side bar
+         * These are currently just the natural color images (RGB), not the individual band images
+         * For now, we will display these, and have the options default to natural colors. 
+         * Afterwards, if the user selects different options (like single band images, or other important band combinations (infrared, agriculture))
+         * We will grab the Landsat L2 Product ID and query the files (perform post-processing if needed, and then display them) 
+         */
         updateSceneSearch(sceneSearchResults);
+
+        
       } catch (e) {
         // TODO: Render a notice if scene search fails to retrieve anything
         console.log(e);
