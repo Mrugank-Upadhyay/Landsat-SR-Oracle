@@ -1,12 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useGlobalStore } from "./store/globalStore";
+import { SceneSearchImage, useGlobalStore } from "./store/globalStore";
 
 export default function ScenesViewer() {
 
   const scenes = useGlobalStore((state) => state.sceneSearch)
 
-  const sceneFilter = () => {
+  // Filter the list of scenes by search options
+  const sceneFilter = (_scene: SceneSearchImage) => {
+
     return true
   }
 
@@ -22,16 +24,13 @@ export default function ScenesViewer() {
         <Card>
           <CardContent>
             <div className="grid-col-2 col-span-1">
-              {/* {
+              {
                 scenes
-                ? scenes.filter((scene) => sceneFilter(scene)).forEach((scene) => {
-                  <img src={scene.browse.}>
-                  </img>
-                })
+                ? scenes.filter((scene) => sceneFilter(scene)).map((scene) => <img src={scene.browse[0].browsePath}></img>)
                 : <h2>
                   No Images Found
                 </h2>
-              } */}
+              }
             </div>
           </CardContent>
         </Card>
