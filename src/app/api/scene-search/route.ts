@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     },
     body: JSON.stringify({
       datasetName: "landsat_ot_c2_l2",
-      maxResults: 5,
+      maxResults: 10,
       metadataType: "full",
       sceneFilter: {
         metadataFilter: {
