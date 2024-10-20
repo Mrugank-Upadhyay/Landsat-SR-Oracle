@@ -12,7 +12,7 @@ export type SatelliteResolution = {
   }[];
 };
 
-export interface SceneSearch {
+export interface SceneSearchImage {
   browse: Browse[];
   cloudCover: number;
   entityId: string;
@@ -81,14 +81,14 @@ export interface GlobalState {
   cloudCoverThreshold?: number; // cloud cover under this value (inclusive),
   chosenAcquisition?: Acquisition;
   satelliteResolution: SatelliteResolution;
-  sceneSearch?: SceneSearch[];
+  sceneSearch: SceneSearchImage[];
   updatePathRows: (val: PathRow[]) => void; // I ain't explaining all of this, good luck, I'm tired
   updateAcquisitions: (val: Acquisition[]) => void;
   updateMarkerLngLat: (val: LngLat | null) => void;
   updateNotificationLeadTime: (val: Date) => void;
   updateCloudCoverThreshold: (val: number) => void;
   updateChosenAcquisition: (val: Acquisition) => void;
-  updateSceneSearch: (val: SceneSearch[]) => void;
+  updateSceneSearch: (val: SceneSearchImage[]) => void;
 }
 
 export const useGlobalStore = create<GlobalState>()((set) => ({
@@ -234,6 +234,7 @@ export const useGlobalStore = create<GlobalState>()((set) => ({
       },
     ],
   },
+  sceneSearch: [],
   updatePathRows: (val: PathRow[]) => set({ pathRows: val }),
   updateAcquisitions: (val: Acquisition[]) => set({ acquisitions: val }),
   updateMarkerLngLat: (val: LngLat | null) => set({ markerLngLat: val }),
@@ -241,5 +242,5 @@ export const useGlobalStore = create<GlobalState>()((set) => ({
   updateCloudCoverThreshold: (val: number) => set({ cloudCoverThreshold: val }),
   updateChosenAcquisition: (val: Acquisition) =>
     set({ chosenAcquisition: val }),
-  updateSceneSearch: (val: SceneSearch[]) => set({ sceneSearch: val }),
+  updateSceneSearch: (val: SceneSearchImage[]) => set({ sceneSearch: val }),
 }));
