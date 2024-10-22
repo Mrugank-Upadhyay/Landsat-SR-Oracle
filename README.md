@@ -48,6 +48,10 @@ This project simplifies that process by integrating satellite overpass schedules
 - Promote Education and Engagement: Encourage users to explore Earth’s changing environment by providing an educational tool that supports interdisciplinary learning and inspires global citizenship through the integration of ground-based and satellite observations.
 - Support environmental monitoring, research, and education by enabling seamless comparison between ground-based and satellite observations.
 
+## 📝 Further Info
+
+You can check out our [Notion](https://artistic-runner-91a.notion.site/NASA-Space-Apps-Challenges-2024-Landsat-SR-Oracle-1106299a0fd18094bc02c45091867a59?pvs=4) page for some more information on our work. 
+
 ## 🚧 Installation & Setup
 
 To run this project locally, follow these steps:
