@@ -12,9 +12,11 @@ import AcquisitionsTable, {
   LandsatSatelliteCycles,
 } from "./acquisitions_table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DividerHorizontalIcon } from "@radix-ui/react-icons";
+import { CaretSortIcon, DividerHorizontalIcon } from "@radix-ui/react-icons";
 import { Separator } from "@/components/ui/separator";
 import ScenesViewer from "./scene_table";
+import { Collapsible } from "@radix-ui/react-collapsible";
+import { CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function Component({
   cycles,
@@ -37,11 +39,30 @@ export default function Component({
         }}
       >
         <ScrollArea className="h-full p-4">
-          <SheetTitle>Acquisitions</SheetTitle>
-          <AcquisitionsTable cycles={cycles} />
+          {/* <SheetTitle>Acquisitions</SheetTitle> */}
+          <Collapsible defaultOpen className="px-0 pb-2">
+            <CollapsibleTrigger>
+              <Button variant="ghost" className="pl-0 text-lg font-semibold text-zinc-950 dark:text-zinc-50">
+                <span>Acquisitions</span>
+                <CaretSortIcon className="h-4 w-4" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <AcquisitionsTable cycles={cycles} />
+            </CollapsibleContent>
+          </Collapsible>
           <Separator />
-          <SheetTitle>Scenes</SheetTitle>
-          <ScenesViewer />
+          <Collapsible className="px-0 py-2">
+            <CollapsibleTrigger>
+              <Button variant="ghost" className="pl-0 text-lg font-semibold text-zinc-950 dark:text-zinc-50">
+                <span>Scenes</span>
+                <CaretSortIcon className="h-4 w-4" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <ScenesViewer /> 
+            </CollapsibleContent>
+          </Collapsible>
           <Separator />
         </ScrollArea>
       </SheetContent>
