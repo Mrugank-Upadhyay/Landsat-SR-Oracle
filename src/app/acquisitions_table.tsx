@@ -177,7 +177,7 @@ export default function AcquisitionsTable({
             new Date()
           )
         )
-        .toSorted((a, b) => b.date.valueOf() - a.date.valueOf())
+        .toSorted((a, b) => b.satellite.localeCompare(a.satellite) || b.date.valueOf() - a.date.valueOf()) // Sort by Satellite first, then date
     );
   }, [pathRows]);
 
