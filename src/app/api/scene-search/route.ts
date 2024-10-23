@@ -12,7 +12,7 @@ enum WRSFilterID {
 // We need to capture the request to the USGS Scene-Search as a POST request and then refetch it as GET
 // Since routes in Next.js can't use json bodies outside of POST methods.
 export async function POST(request: Request) {
-  const { path, row, cloudMax } = await request.json();
+  const { path, row, acquisitionDate, cloudCoverMin, cloudCoverMax } = await request.json();
 
   const url = (process.env.M2M_API_URL || "") + "/scene-search";
   const loginToken = request.headers.get("X-Auth-Token") || "";
@@ -46,8 +46,8 @@ export async function POST(request: Request) {
         },
         // TODO: remove if we're going to get 100 scenes, and then let users filter afterwards (to just reduce API calls for scenes)
         cloudCoverFilter: {
-          min: 0,
-          max: cloudMax,
+          min: cloudCoverMin || 0,
+          max: cloudCoverMax || 100,
         },
       },
     }),
