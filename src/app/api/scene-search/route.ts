@@ -17,6 +17,8 @@ export async function POST(request: Request) {
   const url = (process.env.M2M_API_URL || "") + "/scene-search";
   const loginToken = request.headers.get("X-Auth-Token") || "";
   
+  // TODO: Add error handling
+
   return await fetch(url, {
     method: "POST",
     headers: {
