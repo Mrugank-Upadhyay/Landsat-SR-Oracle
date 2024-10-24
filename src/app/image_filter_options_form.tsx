@@ -85,8 +85,8 @@ export default function ImageFilterOptions() {
 
   const onSubmit = async (values: z.infer<typeof imageFilterFormSchema>) => {
 
-    // // TODO: REMOVE - FOR TESTING PURPOSES ONLY
-    // console.log(values)
+    // TODO: REMOVE - FOR TESTING PURPOSES ONLY
+    console.log(values)
 
 
     const sceneSearchResponse: SceneSearchResponse = await (
@@ -101,6 +101,7 @@ export default function ImageFilterOptions() {
         }),
       })
     ).json();
+    // TODO: Add error handling
     const sceneSearchResults: SceneSearchImage[] =
       sceneSearchResponse.data.results;
 
@@ -111,11 +112,11 @@ export default function ImageFilterOptions() {
      * We will grab the Landsat L2 Product ID and query the files (perform post-processing if needed, and then display them) 
      */
     updateSceneSearch(sceneSearchResults);
-
   }
 
   return (
     <Form {...form}>
+      {/* TODO: Allow satellite selection (default is both) */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="px-4">
           <div className="flex space-x-4 justify-left">
@@ -175,6 +176,7 @@ export default function ImageFilterOptions() {
                         <SelectValue placeholder="Select a preset or single band visualization" />
                       </SelectTrigger>
                     </FormControl>
+                    {/* Add sections/separators to separate presets from single bands */}
                     <SelectContent>
                       <SelectItem value="NATURAL_COLOUR">Natural Colour</SelectItem>
                       <SelectItem value="COLOUR_INFRARED">Colour Infrared</SelectItem>
@@ -197,43 +199,45 @@ export default function ImageFilterOptions() {
             />
           </div>
           <div className="flex space-x-4 justify-left mt-4">
+            {/* TODO: Make cloud cover filter into a double ended slider */}
             <FormField
-                control={form.control}
-                name="cloudCoverMin"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Minimum Cloud Cover</FormLabel>
-                    <FormControl>
-                      <Input className="w-auto text-center" type="number" 
-                        value={field.value} 
-                        onChange={(e) => {
-                          form.setValue('cloudCoverMin', parseInt(e.target.value))
-                          field.onChange(e.target.value)
-                        }} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="cloudCoverMax"
-                render={({field}) => (
-                  <FormItem>
-                    <FormLabel>Maximum Cloud Cover</FormLabel>
-                    <FormControl>
-                      <Input className="w-auto text-center" type="number" 
-                        value={field.value} 
-                        onChange={(e) => {
-                          form.setValue('cloudCoverMax', parseInt(e.target.value))
-                          field.onChange(e.target.value)
-                        }} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              control={form.control}
+              name="cloudCoverMin"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>Minimum Cloud Cover Percentage</FormLabel>
+                  <FormControl>
+                    <Input className="w-auto text-center" type="number" 
+                      value={field.value} 
+                      onChange={(e) => {
+                        field.onChange(e.target.value)
+                        form.setValue('cloudCoverMin', parseInt(e.target.value))
+                      }} 
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cloudCoverMax"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>Maximum Cloud Cover Percentage</FormLabel>
+                  <FormControl>
+                    <Input className="w-auto text-center" type="number"
+                      value={field.value} 
+                      onChange={(e) => {
+                        field.onChange(e.target.value)
+                        form.setValue('cloudCoverMax', parseInt(e.target.value))
+                      }} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </div>
           <Button className="mt-2" type="submit">Submit</Button>
-        </div> 
+        </div>
       </form>
     </Form>
   )
