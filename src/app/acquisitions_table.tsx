@@ -5,6 +5,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { addDays, addSeconds, format, parse, subDays } from "date-fns";
 import { useGlobalStore } from "./store/globalStore";
 import { useEffect } from "react";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@radix-ui/react-collapsible";
+import { CaretSortIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/ui/button";
 
 export type LandsatCyclesFull = {
   [day: string]: {
@@ -166,24 +169,42 @@ export default function AcquisitionsTable({
   const data = useGlobalStore((state) => state.acquisitions);
   const updateData = useGlobalStore((state) => state.updateAcquisitions);
   const pathRows = useGlobalStore((state) => state.pathRows);
+  let pathRowsTables: JSX.Element[] = []
   useEffect(() => {
     updateData(
       pathRows
-        .flatMap((pathRow) =>
-          calculateAcquisitionTimes(
-            cycles,
-            pathRow.path,
-            pathRow.row,
-            new Date()
-          )
+      .flatMap((pathRow) =>
+        calculateAcquisitionTimes(
+          cycles,
+          pathRow.path,
+          pathRow.row,
+          new Date()
         )
-        .toSorted((a, b) => b.satellite.localeCompare(a.satellite) || b.date.valueOf() - a.date.valueOf()) // Sort by Satellite first, then date
+      )
+      .toSorted((a, b) => b.date.valueOf() - a.date.valueOf()) // Sort by Satellite first, then date
     );
   }, [pathRows]);
-
+  
   return (
     <div className="container mx-auto py-4">
-      <DataTable columns={columns} data={data} />
+      {
+        pathRows.toSorted((a, b) => a.path - b.path).map((pathRow) => {
+          const pathRowAcquisition = data.filter((acquisition) =>acquisition.path == pathRow.path && acquisition.row == pathRow.row)
+          return (
+            <Collapsible defaultOpen className="px-0 pb-2 ml-3">
+              <CollapsibleTrigger>
+                <Button variant="ghost" className="pl-0 text-sm font-semibold text-zinc-950 dark:text-zinc-50">
+                  <span>{`Path ${pathRow.path} Row ${pathRow.row}`}</span>
+                  <CaretSortIcon className="h-4 w-4" />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <DataTable className="my-4" columns={columns} data={pathRowAcquisition} />
+              </CollapsibleContent>
+            </Collapsible>
+          )
+        })
+      }
     </div>
   );
 }
