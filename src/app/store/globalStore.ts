@@ -75,7 +75,7 @@ export interface TemporalCoverage {
 
 export interface GlobalState {
   pathRows: PathRow[];
-  acquisitions: Acquisition[]; // All acquisitions (total 6, DESC order)
+  acquisitions: Acquisition[]; // All acquisitions (total 6 per path/row, DESC order)
   markerLngLat: LngLat | null; // LngLat for selected location by marker
   notificationLeadTime?: Date;
   cloudCoverThreshold?: number; // cloud cover under this value (inclusive),
