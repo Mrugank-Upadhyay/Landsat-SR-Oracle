@@ -1,4 +1,4 @@
-# Web App Under Construction
+# Web App Under Construction (visit https://landsat-sr-oracle.vercel.app/ to check out the progress)
 ---
 
 # 🌍 Landsat SR Oracle
