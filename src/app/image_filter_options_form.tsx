@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback } from "react";
+import _debounce from 'lodash/debounce';
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,13 +19,14 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { DatePickerWithRange } from "./date_range_picker";
 import { DateRange } from "react-day-picker"
-import path from "path";
+import { Slider } from "@/components/ui/slider"
 import { SceneSearchResponse } from "./api/scene-search/route";
 
 
@@ -46,15 +48,22 @@ enum Bands {
   // CUSTOM_RGB = "Custom RGB", // TODO: We'll add this in later (requires way more processing so it's not an immediate feature)
 }
 
+enum Satellites {
+  LANDSAT_8 = "Landsat 8",
+  LANDSAT_9 = "Landsat 9",
+  LANDSAT_8_AND_LANDSAT_9 = "Landsat 8 and 9",
+}
+
+const satelliteKeys = Object.keys(Satellites) as [keyof typeof Satellites]
 const bandKeys = Object.keys(Bands) as [keyof typeof Bands]
 
 export const imageFilterFormSchema = z.object({
+  satellite: z.enum(satelliteKeys),
   path: z.number(),
   row: z.number(),
   acquisitionDate: z.custom<DateRange>().optional(),
   bands: z.enum(bandKeys),
-  cloudCoverMin: z.number().min(0, {message: "Value cannot be lower than 0"}).max(100, {message: "Value cannot be higher than 100"}).optional(),
-  cloudCoverMax: z.number().min(0, {message: "Value cannot be lower than 0"}).max(100, {message: "Value cannot be higher than 100"}).optional(),
+  cloudCover: z.number(),
 })
 
 
@@ -68,16 +77,18 @@ export default function ImageFilterOptions() {
   const form = useForm<z.infer<typeof imageFilterFormSchema>>({
     resolver: zodResolver(imageFilterFormSchema),
     defaultValues: {
+      satellite: "LANDSAT_8_AND_LANDSAT_9",
       path: pathRows[0]?.path || 0,
       row: pathRows[0]?.row || 0,
       bands: "NATURAL_COLOUR", // Update to be an ENUM
-      cloudCoverMin: 0,
-      cloudCoverMax: 20,
+      cloudCover: 30,
     },
     values: {
+      satellite: "LANDSAT_8_AND_LANDSAT_9",
       path: pathRows[0]?.path || 0,
       row: pathRows[0]?.row || 0,
       bands: "NATURAL_COLOUR",
+      cloudCover: 30,
     },
     resetOptions: {keepDefaultValues: true}
   })
@@ -96,15 +107,17 @@ export default function ImageFilterOptions() {
           path: values.path,
           row: values.row,
           // TODO: Add acquisition date
-          cloudCoverMin: values.cloudCoverMin,
-          cloudCoverMax: values.cloudCoverMax
+          cloudCover: values.cloudCover,
+          acquisitionDate: values.acquisitionDate,
         }),
       })
     ).json();
+
     // TODO: Add error handling
     const sceneSearchResults: SceneSearchImage[] =
       sceneSearchResponse.data.results;
 
+    console.log(JSON.stringify(sceneSearchResponse))
     /* Save the scene search to global store to display the images in side bar
      * These are currently just the natural color images (RGB), not the individual band images
      * For now, we will display these, and have the options default to natural colors. 
@@ -114,12 +127,46 @@ export default function ImageFilterOptions() {
     updateSceneSearch(sceneSearchResults);
   }
 
+  const cloudCoverDebounceFn = useCallback(_debounce((val: number) => form.setValue("cloudCover", val), 500), [])
+
   return (
     <Form {...form}>
       {/* TODO: Allow satellite selection (default is both) */}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="px-4">
           <div className="flex space-x-4 justify-left">
+            <FormField
+              control={form.control}
+              name="satellite"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>Satellite</FormLabel>
+                  <FormControl>
+                    <Select 
+                      onValueChange={(e) => {
+                        field.onChange(e)
+                        form.setValue('satellite', e as keyof typeof Satellites)
+                      }} 
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a satellite (defaults to Landsat 8 & 9)" />
+                        </SelectTrigger>
+                      </FormControl>
+                      {/* Add sections/separators to separate presets from single bands */}
+                      <SelectContent>
+                        <SelectItem value="LANDSAT_8_AND_LANDSAT_9">Landsat 8 & 9</SelectItem>
+                        <SelectSeparator />
+                        <SelectItem value="LANDSAT_8">Landsat 8</SelectItem>
+                        <SelectSeparator />
+                        <SelectItem value="LANDSAT_9">Landsat 9</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="path"
@@ -157,7 +204,7 @@ export default function ImageFilterOptions() {
               )}
             />
           </div>
-          <div className="mt-4">
+          <div className="flex space-x-4 justify-left mt-4">
             <FormField
               control={form.control}
               name="bands"
@@ -179,64 +226,77 @@ export default function ImageFilterOptions() {
                     {/* Add sections/separators to separate presets from single bands */}
                     <SelectContent>
                       <SelectItem value="NATURAL_COLOUR">Natural Colour</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="COLOUR_INFRARED">Colour Infrared</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="FALSE_COLOUR_VEGETATION_ANALYSIS">False Colour (Vegetation Analysis)</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="FALSE_COLOUR_URBAN">False Colour (Urban Analysis)</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="COASTAL_AEROSOL">Coastal Aerosol</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="BLUE">Blue</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="GREEN">Green</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="RED">Red</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="NEAR_INFRARED">Near Infrared</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="SWI1">Shortwave Infrared 1</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="SWI2">Shortwave Infrared 2</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="PANCHROMATIC">Panchromatic</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="CIRRUS">Cirrus</SelectItem>
+                      <SelectSeparator />
                       <SelectItem value="THERMAL">Thermal</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormItem>
               )}
             />
-          </div>
-          <div className="flex space-x-4 justify-left mt-4">
             {/* TODO: Make cloud cover filter into a double ended slider */}
             <FormField
               control={form.control}
-              name="cloudCoverMin"
+              name="cloudCover"
               render={({field}) => (
                 <FormItem>
                   <FormLabel>Minimum Cloud Cover Percentage</FormLabel>
                   <FormControl>
-                    <Input className="w-auto text-center" type="number" 
-                      value={field.value} 
-                      onChange={(e) => {
-                        field.onChange(e.target.value)
-                        form.setValue('cloudCoverMin', parseInt(e.target.value))
-                      }} 
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="cloudCoverMax"
-              render={({field}) => (
-                <FormItem>
-                  <FormLabel>Maximum Cloud Cover Percentage</FormLabel>
-                  <FormControl>
-                    <Input className="w-auto text-center" type="number"
-                      value={field.value} 
-                      onChange={(e) => {
-                        field.onChange(e.target.value)
-                        form.setValue('cloudCoverMax', parseInt(e.target.value))
-                      }} />
+                    <div className="flex space-x-2 justify-left items-end">
+                      <div className="w-[64%]">
+                        <Slider value={[field.value]} min={0} max={100} 
+                          onValueChange={(e) => {
+                            field.onChange(e)
+                            form.setValue('cloudCover', e[0])
+                          }}
+
+                        />
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">0</span>
+                          <span className="text-sm text-muted-foreground">100</span>
+                        </div>
+                      </div>
+                      <Input className="w-[36%]" type="number" value={field.value} min={0} max={100}
+                        onChange={(e) => {
+                          if (parseInt(e.target.value) > 100) {
+                            field.onChange("100")
+                          }
+                          else {
+                            field.onChange(parseInt(e.target.value, 10).toString())
+                            cloudCoverDebounceFn(parseInt(e.target.value))
+                          }
+                        }} 
+                      />
+                    </div>
                   </FormControl>
                 </FormItem>
               )}
             />
           </div>
-          <Button className="mt-2" type="submit">Submit</Button>
+          <Button className="mt-3" type="submit">Submit</Button>
         </div>
       </form>
     </Form>
