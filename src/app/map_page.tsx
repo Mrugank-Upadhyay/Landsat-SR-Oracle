@@ -100,10 +100,6 @@ const MapPage = ({ accessToken }: { accessToken: string }) => {
 
       if (features.length > 1) {
         features.slice(1).forEach((feature) => {
-          wrs2BoundaryFeatures.pathRows.push({
-            path: feature.path,
-            row: feature.row,
-          });
           wrs2BoundaryFeatures.boundary.features.push({
             type: "Feature",
             geometry: {
@@ -118,7 +114,7 @@ const MapPage = ({ accessToken }: { accessToken: string }) => {
       setWRS2BoundaryList(wrs2BoundaryFeatures);
 
       try {
-        const cloudMax = 20;
+        const cloudMax = 30;
         const path = features[0].path;
         const row = features[0].row;
         const sceneSearchResponse: SceneSearchResponse = await (
@@ -155,6 +151,7 @@ const MapPage = ({ accessToken }: { accessToken: string }) => {
     updatePathRows([]);
     updateMarkerLngLat(null);
     setWRS2BoundaryList(null);
+    updateSceneSearch([])
   };
 
   return (
