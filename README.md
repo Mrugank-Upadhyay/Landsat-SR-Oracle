@@ -50,7 +50,7 @@ This project simplifies that process by integrating satellite overpass schedules
 
 ## 📝 Further Info
 
-You can check out our [Notion](https://artistic-runner-91a.notion.site/NASA-Space-Apps-Challenges-2024-Landsat-SR-Oracle-1106299a0fd18094bc02c45091867a59?pvs=4) page for some more information on our work. 
+You can check out Mrugank's [Notion](https://artistic-runner-91a.notion.site/NASA-Space-Apps-Challenges-2024-Landsat-SR-Oracle-1106299a0fd18094bc02c45091867a59?pvs=4) page for some more information on the project. 
 
 ## 🚧 Installation & Setup
 
