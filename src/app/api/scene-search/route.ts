@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       cloudCoverFilter: {
         max: cloudCover || 100,
       },
-      ...(acquisitionDate && {acquisitionDate: { start: acquisitionDate.from!, ...(acquisitionDate.to && { end: acquisitionDate.to})}})
+      ...(acquisitionDate && {acquisitionFilter: { start: acquisitionDate.from!, ...(acquisitionDate.to && { end: acquisitionDate.to})}})
     },
   }
 
