@@ -17,12 +17,26 @@ import { Separator } from "@/components/ui/separator";
 import ScenesViewer from "./scene_table";
 import { Collapsible } from "@radix-ui/react-collapsible";
 import { CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useGlobalStore } from "./store/globalStore";
+import { ImageFilterOptionsSchema } from "./image_filter_options_form";
+import ImageFilterOptionsProvider from "./image_filter_options_provider";
 
 export default function Component({
   cycles,
 }: {
   cycles: LandsatSatelliteCycles;
 }) {
+
+  const pathRows = useGlobalStore((state) => state.pathRows);
+  const initialImageFilterOptions: ImageFilterOptionsSchema = {
+    satellite: "LANDSAT_8_AND_LANDSAT_9",
+    path: pathRows[0]?.path || 0,
+    row: pathRows[0]?.row || 0,
+    bands: "NATURAL_COLOUR",
+    cloudCover: 30,
+  }
+
+
   return (
     <Sheet modal={false} defaultOpen >
       <SheetTrigger asChild>
@@ -60,7 +74,9 @@ export default function Component({
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <ScenesViewer /> 
+              <ImageFilterOptionsProvider initialImageFilterOptions={initialImageFilterOptions}>
+                <ScenesViewer /> 
+              </ImageFilterOptionsProvider>
             </CollapsibleContent>
           </Collapsible>
           <Separator />
