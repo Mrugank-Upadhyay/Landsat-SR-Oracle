@@ -13,7 +13,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { imageFilterFormSchema } from "./image_filter_options_form"
 import { UseFormSetValue } from "react-hook-form"
 
 
